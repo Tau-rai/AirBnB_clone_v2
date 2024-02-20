@@ -78,7 +78,7 @@ class HBNBCommand(cmd.Cmd):
                         _args = pline
                     else:
                         _args = pline.replace(',', '')
-                        # _args = _args.replace('\"', '')
+
             line = ' '.join([_cmd, _cls, _id, _args])
 
         except Exception as mess:
@@ -127,7 +127,7 @@ class HBNBCommand(cmd.Cmd):
             try:
                 key, value = param.split('=')
                 if value[0] == '\"':
-                    value = value[1:-1].replace('_', '').replace('\\\"', '\"')
+                    value = value[1:-1].replace('_', ' ').replace('\\\"', '\"')
                 elif '.' in value:
                     value = float(value)
                 else:
@@ -167,8 +167,9 @@ class HBNBCommand(cmd.Cmd):
             return
 
         key = c_name + "." + c_id
+        objs = storage.all(c_name)
         try:
-            print(storage._FileStorage__objects[key])
+            print(objs[key])
         except KeyError:
             print("** no instance found **")
 
@@ -219,11 +220,13 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
+            objs = storage.all(args)
+            for k, v in objs.items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            objs = storage.all(args)
+            for k, v in objs.items():
                 print_list.append(str(v))
 
         print(print_list)
@@ -236,7 +239,8 @@ class HBNBCommand(cmd.Cmd):
     def do_count(self, args):
         """Count current number of class instances"""
         count = 0
-        for k, v in storage._FileStorage__objects.items():
+        objs = storage.all(args)
+        for k, v in objs.items():
             if args == k.split('.')[0]:
                 count += 1
         print(count)

@@ -12,12 +12,27 @@ class FileStorage:
         """Returns a dictionary of models currently in
         storage of one type of class
         """
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.place import Place
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.review import Review
+        classes = {
+                'BaseModel': BaseModel, 'User': User, 'Place': Place,
+                'State': State, 'City': City, 'Amenity': Amenity,
+                'Review': Review
+              }
         if cls is None:
             return FileStorage.__objects
         else:
+            cls = classes.get(cls)
+            if cls is None:
+                return FileStorage.__objects
             filter_objects = {}
             for k, v in FileStorage.__objects.items():
-                if isinstance(v, cls):
+                if cls is not None and isinstance(v, cls):
                     filter_objects[k] = v
             return filter_objects
 
@@ -54,10 +69,10 @@ class FileStorage:
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                    self.all()[key] = classes[val['__class__']](**val)
+                        self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
-
+    
     def delete(self, obj=None):
         """Deletes an object"""
         if obj is None:
@@ -65,4 +80,5 @@ class FileStorage:
         else:
             key = "{}.{}".format(type(obj).__name__, obj.id)
             if key in FileStorage.__objects:
-                del FileStorage.__objects[key]
+             del FileStorage.__objects[key]
+        
