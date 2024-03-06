@@ -140,3 +140,108 @@ Usage: <class_name>.update(<_id>, <dictionary>)
 (hbnb) ["[User] (98bea5de-9cb0-4d78-8a9d-c4de03521c30) {'updated_at': datetime.datetime(2020, 2, 19, 21, 47, 29, 134362), 'name': 'Fred the Frog', 'age': 9, 'id': '98bea5de-9cb0-4d78-8a9d-c4de03521c30', 'created_at': datetime.datetime(2020, 2, 19, 21, 47, 29, 134343)}"]
 ```
 <br>
+
+## Changes Made
+1. **MySQL Setup for Development:**
+   - Configured MySQL for development environment.
+  
+2. **Update FileStorage:**
+   - Implemented `DBStorage` using SQLAlchemy.
+
+3. **Changes to Classes:**
+   - Introduced storage mechanism.
+   - Added an `__init__` method to facilitate the switch between different storage options, such as `DBStorage` and `FileStorage`.
+   
+```python
+class MyClass:
+    def __init__(self, storage_type):
+        if storage_type == 'DBStorage':
+            self.storage = DBStorage()
+        elif storage_type == 'FileStorage':
+            self.storage = FileStorage()
+        else:
+            raise ValueError("Invalid storage type")
+
+    def update(self, _id, data):
+        self.storage.update(_id, data)
+```
+
+4. **Utilization of SQLAlchemy ORM and MySQL DB:**
+   - Utilized SQLAlchemy ORM to interact with the MySQL database effectively.
+
+```python
+# Example of using SQLAlchemy ORM with MySQL
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+engine = create_engine('mysql://user:password@localhost/mydatabase')
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Perform database operations using session
+```
+
+5. **Integration of New Data Structures or Schemas:**
+   - Defined SQLAlchemy models for data structures.
+   - Ensured proper integration of new schemas with `DBStorage`.
+
+## Accommodating Changes
+Ensure that your application's logic is updated to handle the new storage mechanism seamlessly. This may involve:
+- Modifying existing methods or adding new ones to interact with the database through SQLAlchemy ORM.
+- Implementing error handling and database migration strategies.
+- Thoroughly testing the application to verify correctness and performance.
+
+### Additional Steps:
+
+6. **Define SQLAlchemy Models:**
+   - Define SQLAlchemy models for your data structures, ensuring they reflect your database schema.
+
+```python
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    age = Column(Integer)
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
+```
+
+7. **Update Application Logic:**
+   - Update your application logic to interact with the database using SQLAlchemy ORM, including CRUD operations and querying.
+
+```python
+# CRUD operations with SQLAlchemy ORM
+# Example of creating and updating a user
+user = User(name='Fred the Frog', age=9)
+session.add(user)
+session.commit()
+
+# Read
+users = session.query(User).all()
+for user in users:
+    print(user.name, user.age)
+
+# Update
+user = session.query(User).filter_by(name='Fred the Frog').first()
+if user:
+    user.age = 10
+    session.commit()
+
+# Delete
+user = session.query(User).filter_by(name='Fred the Frog').first()
+if user:
+    session.delete(user)
+    session.commit()
+```
+
+
+-----------------------------
+
+
+
