@@ -15,9 +15,9 @@ env.hosts = ['34.204.95.239', '54.234.17.205']
 
 def do_deploy(archive_path):
     """Distributes an archive to the web servers"""
-    if not archive_path:
+    if not os.path.exists(archive_path):
         return False
-    else:
+    try:
         # Extract the filename without extension
         filename = os.path.basename(archive_path)
         name, ext = os.path.splitext(filename)
@@ -44,6 +44,6 @@ def do_deploy(archive_path):
 
         # create a symlink to new version of code
         run(f"ln -s {release_dir} /data/web_static/current")
-
-    # check if all operations were successful
-    return run("stat /data/web_static/current").succeeded
+        return True
+    except:
+        return False
