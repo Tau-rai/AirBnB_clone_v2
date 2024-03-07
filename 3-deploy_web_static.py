@@ -42,25 +42,25 @@ def do_deploy(archive_path):
     name = filename[: -4]
 
     # define the release directory using the extracted name
-    release_dir = f"/data/web_static/releases/{name}/"
+    release_dir = "/data/web_static/releases/{}".format(name)
 
     # upload and uncompress the archive to a folder
     put(archive_path, "/tmp/")
-    run(f"mkdir -p {release_dir}")
-    r = run(f"tar -xzf /tmp/{filename} -C {release_dir}")
+    run("mkdir -p {}".format(release_dir))
+    r = run("tar -xzf /tmp/{} -C {}".format(filename, release_dir))
 
     if r.failed:
         return False
 
     # copy files into the right directory
-    run(f"cp -r {release_dir}/web_static/* {release_dir}")
-    run(f"rm /tmp/{filename} {release_dir}/web_static")
+    run("cp -r {}/web_static/* {}".format(release_dir, release_dir))
+    run("rm /tmp/{} {}/web_static".format(filename, release_dir))
 
     # delete symbolic link from web server
     run("rm -rf /data/web_static/current")
 
     # create a symlink to new version of code
-    run(f"ln -s {release_dir} /data/web_static/current")
+    run("ln -s {} /data/web_static/current".format(release_dir))
 
     print("New version deployed")
 
