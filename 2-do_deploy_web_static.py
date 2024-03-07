@@ -7,10 +7,27 @@ using the function do_deploy
 
 import os
 from fabric.api import *
+from datetime import datetime
 
 
 env.user = 'ubuntu'
 env.hosts = ['34.204.95.239', '54.234.17.205']
+
+
+def do_pack():
+    """This function generates a .tgz archive"""
+    local('mkdir -p versions')
+
+    # generate the .tgz archive
+    time = datetime.now().strftime('%Y%m%d%H%M%S')
+    archive_path = 'versions/web_static_{}.tgz'.format(time)
+    result = local('tar -czvf {} web_static'.format(archive_path))
+
+    # if successful return the archive path
+    if result.succeeded:
+        return archive_path
+    else:
+        return None
 
 
 def do_deploy(archive_path):
@@ -18,8 +35,7 @@ def do_deploy(archive_path):
     if not os.path.exists(archive_path):
         return False
 
-    # copy archive to server
-    put(archive_path, "/tmp/")
+    print("Deploying new version")
 
     # extract the filename without extension
     filename = archive_path.split("/")[-1]
@@ -28,18 +44,17 @@ def do_deploy(archive_path):
     # define the release directory using the extracted name
     release_dir = f"/data/web_static/releases/{name}/"
 
-    # uncompress the archive to a folder
+    # upload and uncompress the archive to a folder
+    put(archive_path, "/tmp/")
     run(f"mkdir -p {release_dir}")
     r = run(f"tar -xzf /tmp/{filename} -C {release_dir}")
 
     if r.failed:
         return False
 
-    # remove archive
+    # copy files into the right directory
+    run(f"cp -r {release_dir}/web_static/* {release_dir}")
     run(f"rm /tmp/{filename}")
-
-    # move files into the right directory
-    run(f"mv -n {release_dir}/web_static/* {release_dir}")
     run(f"rm -rf {release_dir}/web_static")
 
     # delete symbolic link from web server
@@ -47,5 +62,7 @@ def do_deploy(archive_path):
 
     # create a symlink to new version of code
     run(f"ln -s {release_dir} /data/web_static/current")
-    
+
+    print("New version deployed")
+
     return True
