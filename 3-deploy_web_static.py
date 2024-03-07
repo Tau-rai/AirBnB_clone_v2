@@ -54,7 +54,7 @@ def do_deploy(archive_path):
 
     # copy files into the right directory
     run("cp -r {}/web_static/* {}".format(release_dir, release_dir))
-    run("rm /tmp/{} {}/web_static".format(filename, release_dir))
+    run("rm -rf /tmp/{} {}/web_static".format(filename, release_dir))
 
     # delete symbolic link from web server
     run("rm -rf /data/web_static/current")
