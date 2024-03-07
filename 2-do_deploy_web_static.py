@@ -18,15 +18,15 @@ def do_deploy(archive_path):
     if not os.path.exists(archive_path):
         return False
     try:
-        # Extract the filename without extension
-        filename = os.path.basename(archive_path)
-        name, ext = os.path.splitext(filename)
-
-        # Define the release directory using the extracted name
-        release_dir = f"/data/web_static/releases/{name}/"
-
         # copy archive to server
         put(archive_path, "/tmp/")
+
+        # extract the filename without extension
+        filename = archive_path.split("/")[-1]
+        name = filename.split(".")[0]
+
+        # define the release directory using the extracted name
+        release_dir = f"/data/web_static/releases/{name}/"
 
         # uncompress the archive to a folder
         run(f"mkdir -p {release_dir}")
@@ -38,6 +38,10 @@ def do_deploy(archive_path):
         # move files into the right directory
         run(f"mv {release_dir}/web_static/* {release_dir}")
         run(f"rm -rf {release_dir}/web_static")
+
+        # set appropriate permissions for files and directories
+        run(f"chmod -R 755 {release_dir}")
+        run(f"chown -R www-data:www-data {release_dir}")
 
         # delete symbolic link from web server
         run("rm -rf /data/web_static/current")
