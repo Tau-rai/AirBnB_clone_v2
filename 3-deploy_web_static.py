@@ -52,7 +52,7 @@ def do_deploy(archive_path):
         return False
 
     # remove archive
-    # run(f"rm /tmp/{filename}")
+    run(f"rm /tmp/{filename}")
 
     # move files into the right directory
     run(f"mv -n {release_dir}/web_static/* {release_dir}")
