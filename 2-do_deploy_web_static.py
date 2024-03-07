@@ -39,7 +39,7 @@ def do_deploy(archive_path):
 
     # extract the filename without extension
     filename = archive_path.split("/")[-1]
-    name = filename.split(".")[0]
+    name = filename[: -4]
 
     # define the release directory using the extracted name
     release_dir = f"/data/web_static/releases/{name}/"
@@ -54,8 +54,7 @@ def do_deploy(archive_path):
 
     # copy files into the right directory
     run(f"cp -r {release_dir}/web_static/* {release_dir}")
-    run(f"rm /tmp/{filename}")
-    run(f"rm -rf {release_dir}/web_static")
+    run(f"rm /tmp/{filename} {release_dir}/web_static")
 
     # delete symbolic link from web server
     run("rm -rf /data/web_static/current")
