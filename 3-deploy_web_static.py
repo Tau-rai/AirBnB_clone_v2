@@ -6,7 +6,7 @@ to my servers using Fabric
 
 
 import os
-from fabric.api import local, run, put, env
+from fabric.api import local, run, put, env, sudo
 from datetime import datetime
 
 
@@ -56,8 +56,8 @@ def do_deploy(archive_path):
         run(f"rm -rf {release_dir}/web_static")
 
         # set appropriate permissions for files and directories
-        run(f"chmod -R 755 {release_dir}")
-        run(f"chown -R www-data:www-data {release_dir}")
+        sudo(f"chmod -R 755 {release_dir}")
+        sudo(f"chown -R www-data:www-data {release_dir}")
 
         # delete symbolic link from web server
         run("rm -rf /data/web_static/current")

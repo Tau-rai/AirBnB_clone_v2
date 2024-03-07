@@ -6,7 +6,7 @@ using the function do_deploy
 
 
 import os
-from fabric.api import put, run, env
+from fabric.api import put, run, env, sudo
 
 
 env.user = 'ubuntu'
@@ -36,12 +36,12 @@ def do_deploy(archive_path):
         run(f"rm /tmp/{filename}")
 
         # move files into the right directory
-        run(f"mv {release_dir}/web_static/* {release_dir}")
+        run(f"mv -n {release_dir}/web_static/* {release_dir}")
         run(f"rm -rf {release_dir}/web_static")
 
         # set appropriate permissions for files and directories
-        run(f"chmod -R 755 {release_dir}")
-        run(f"chown -R www-data:www-data {release_dir}")
+        sudo(f"chmod -R 755 {release_dir}")
+        sudo(f"chown -R www-data:www-data {release_dir}")
 
         # delete symbolic link from web server
         run("rm -rf /data/web_static/current")
