@@ -72,4 +72,11 @@ def deploy():
     pack_result = do_pack()
     if not pack_result:
         return False
-    return do_deploy(pack_result)
+    
+    deploy_results = []
+    for host in env.hosts:
+        env.host_string = host
+        deploy_results.append(do_deploy(pack_result))
+    
+    # Check if all deployments were successful
+    return all(deploy_results)
