@@ -72,11 +72,19 @@ def deploy():
     pack_result = do_pack()
     if not pack_result:
         return False
-    
-    deploy_results = []
-    for host in env.hosts:
-        env.host_string = host
-        deploy_results.append(do_deploy(pack_result))
-    
-    # Check if all deployments were successful
-    return all(deploy_results)
+
+    # extract archive locally
+    release_path = "/tmp/"
+    local("mkdir -p {}".format(release_path))
+    local("tar -xzf {} -C {}".format(pack_result, release_path))
+
+    # update symlink to point to new version
+    local("rm -rf /data/web_static/current")
+    local("ln -s {}/web_static /data/web_static/current".format(release_path))
+
+    print("Deployment successful")
+    return True
+
+
+# call the deploy function
+deploy()
