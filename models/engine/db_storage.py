@@ -18,7 +18,7 @@ class DBStorage:
     """The Database storage class"""
     __engine = None
     __session = None
-    
+
     def __init__(self):
         """Instatiates class attributes"""
         self.__engine = create_engine(
@@ -39,7 +39,7 @@ class DBStorage:
         """Queries current db session all objects depending on class name"""
         objs_dict = {}
         classes = {
-            "State": State, "City": City, "User": User, 
+            "State": State, "City": City, "User": User,
             "Place": Place, "Review": Review, "Amenity": Amenity
             }
         if cls:
@@ -71,8 +71,13 @@ class DBStorage:
             self.__session.delete(obj)
 
     def reload(self):
-        """Creates all tables in the db and the current db sesssion""" 
+        """Creates all tables in the db and the current db sesssion"""
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        session_factory = sessionmaker(
+            bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(session_factory)
         self.__session = Session()
+
+    def close(self):
+        """Closes the session"""
+        self.__session.close()
