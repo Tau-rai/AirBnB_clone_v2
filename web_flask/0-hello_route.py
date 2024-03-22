@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-This file ccontains a script that starts a Flask web applications
+This file contains a script that starts a Flask web applications
 """
 
 
