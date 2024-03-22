@@ -10,14 +10,16 @@ from os import getenv
 class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
-    name = Column(String(128), nullable=False)
 
     # For DBStorage
     if getenv("HBNB_TYPE_STORAGE") == "db":
+        name = Column(String(128), nullable=False)
         cities = relationship(
-            "City", backref="state", cascade="all, delete")
+            "City", backref="state", cascade="all, delete, delete-orphan")
     else:
         # For FileStorage
+        name = ''
+        
         @property
         def cities(self):
             """Lists instances of City with state_id == to current State.id"""
