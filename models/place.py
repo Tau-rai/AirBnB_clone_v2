@@ -3,13 +3,15 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, Table
 from models.review import Review
+from models.amenity import Amenity
 from sqlalchemy.orm import relationship
 import os
 
 # place_amenity = Table('place_amenity', Base.metadata,
 #         Column('place_id', String(60), ForeignKey("places.id"),
 #             primary_key=True, nullable=False),
-#         Column('amenity_id', String(60), ForeignKey("amenities.id"), nullable=False)
+#         Column('amenity_id', String(60), ForeignKey("amenities.id"),
+#             primary_key=True, nullable=False)
 #         )
 
 
@@ -30,7 +32,8 @@ class Place(BaseModel, Base):
     user = relationship('User', back_populates="places")
     cities = relationship('City', back_populates="places")
     reviews = relationship('Review', backref="place", cascade="all, delete")
-    # amenities = relationship('Amenity', secondary=place_amenity,
+    # amenities = relationship(
+        # 'Amenity', secondary=place_amenity,
     #  viewonly=False, back_populates="place_amenities")
 
     if os.getenv('HBNB_TYPE_STORAGE') != 'db':
@@ -42,14 +45,17 @@ class Place(BaseModel, Base):
             from models import storage
             return [review for review in storage.all(Review).values()
                     if review.place_id == self.id]
+        
         # @property
         # def amenities(self):
         #      """Returns list of Amenity instances"""
         #      from models import storage
         #      return [amenity for amenity in storage.all(Amenity).values()
         #   if amenity.id in self.amenity_ids]
+        
         # @amenities.setter
         # def amenities(self, obj):
         #     """Append an Amenity.id to the attribute amenity_ids"""
-        #     if isinstance(obj,Amenity):
-        #         self.amenity_ids.append(obj.id)
+        #     if type(obj) is Amenity:
+        #         if obj.id not in self.amenity_ids:
+        #             self.amenity_ids.append(obj.id)
