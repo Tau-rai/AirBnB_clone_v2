@@ -37,25 +37,20 @@ class DBStorage:
 
     def all(self, cls=None):
         """Queries current db session all objects depending on class name"""
-        objs_dict = {}
-        classes = {
-            "State": State, "City": City, "User": User,
-            "Place": Place, "Review": Review, "Amenity": Amenity
-            }
-        if cls:
-            a_class = classes.get(cls, None)
-            objs = self.__session.query(a_class).all()
-            for obj in objs:
-                key = '{}.{}'.format(type(obj).__name__, obj.id)
-                objs_dict[key] = obj
+        objects_dict = dict()
+        all_classes = (User, State, City, Amenity, Place, Review)
+        if cls is None:
+            for class_type in all_classes:
+                query = self.__session.query(class_type)
+                for obj in query.all():
+                    obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
+                    objects_dict[obj_key] = obj
         else:
-            # classes = [State, City, User, Place, Review, Amenity]
-            for cls in classes.values():
-                objs = self.__session.query(cls).all()
-                for obj in objs:
-                    key = '{}.{}'.format(type(obj).__name__, obj.id)
-                    objs_dict[key] = obj
-        return objs_dict
+            query = self.__session.query(cls)
+            for obj in query.all():
+                obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
+                objects_dict[obj_key] = obj
+        return objects_dict
 
     def new(self, obj):
         """Adds objects to the current db session"""
@@ -72,7 +67,6 @@ class DBStorage:
 
     def reload(self):
         """Creates all tables in the db and the current db sesssion"""
-        # Base.metadata.tables['amenities'].create(self.__engine, checkfirst=True)
         Base.metadata.create_all(self.__engine, checkfirst=True)
         session_factory = sessionmaker(
             bind=self.__engine, expire_on_commit=False)
