@@ -3,20 +3,22 @@
 This file contains a script that starts a Flask web application
 """
 
-
 from flask import Flask, render_template
 from models import storage
 from models.state import State
+from models.amenity import Amenity
 
 
 app = Flask(__name__)
 
 
-@app.route("/states_list", strict_slashes=False)
-def list_states():
-    """Lists all the states in the states list"""
+@app.route("/hbnb_filters", strict_slashes=False)
+def hbnb_filters():
+    """Lists all the states and cities"""
     states = storage.all(State).values()
-    return render_template("7-states_list.html", states=states)
+    amenities = storage.all(Amenity).values()
+    return render_template(
+        "10-hbnb_filters.html", states=states, amenities=amenities)
 
 
 @app.teardown_appcontext

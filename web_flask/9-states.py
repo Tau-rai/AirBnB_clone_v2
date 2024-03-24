@@ -16,8 +16,7 @@ app = Flask(__name__)
 def states():
     """Lists all the states in the states list"""
     states = storage.all(State).values()
-    sorted_states = sorted(states, key=lambda state: state.name)
-    return render_template("states.html", states=sorted_states)
+    return render_template("states.html", states=states)
 
 
 @app.route("/states/<id>", strict_slashes=False)
@@ -31,9 +30,9 @@ def state_id(id):
 
     if state:
         cities = state.cities
-        sorted_cities = sorted(cities, key=lambda city: city.name)
+        # sorted_cities = sorted(cities, key=lambda city: city.name)
         return render_template(
-            "state_cities.html", state=state, cities=sorted_cities)
+            "state_cities.html", state=state, cities=cities)
     else:
         return render_template("state_cities.html"), 404
 
@@ -45,4 +44,4 @@ def close_db(error):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000)
