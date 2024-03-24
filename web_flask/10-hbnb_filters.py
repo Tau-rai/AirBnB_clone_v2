@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-This file contains a script that starts a Flask web application
+This module contains a script that starts a Flask web application
 """
 
 from flask import Flask, render_template
@@ -23,7 +23,7 @@ def hbnb_filters():
 
 @app.teardown_appcontext
 def close_db(error):
-    """Closes the storage on teardown"""
+    """Closes the current session"""
     storage.close()
 
 

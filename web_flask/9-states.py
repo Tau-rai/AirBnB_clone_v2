@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-This file contains a script that starts a Flask web application
+This module contains a script that starts a Flask web application
 """
 
 from flask import Flask, render_template
@@ -30,16 +30,15 @@ def state_id(id):
 
     if state:
         cities = state.cities
-        # sorted_cities = sorted(cities, key=lambda city: city.name)
         return render_template(
             "state_cities.html", state=state, cities=cities)
     else:
-        return render_template("state_cities.html"), 404
+        return render_template("not_found.html"), 404
 
 
 @app.teardown_appcontext
 def close_db(error):
-    """Closes the storage on teardown"""
+    """Closes the current session"""
     storage.close()
 
 
