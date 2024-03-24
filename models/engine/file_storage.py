@@ -22,7 +22,7 @@ class FileStorage:
                 'BaseModel': BaseModel, 'User': User, 'Place': Place,
                 'State': State, 'City': City, 'Amenity': Amenity,
                 'Review': Review
-              }
+                }
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
@@ -57,7 +57,7 @@ class FileStorage:
                 temp = json.load(file)
                 for key, val in temp.items():
                     self.all()[key] = classes[val['__class__']](**val)
-    
+
     def delete(self, obj=None):
         """Deletes an object"""
         if obj is None:

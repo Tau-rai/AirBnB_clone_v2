@@ -19,7 +19,7 @@ class State(BaseModel, Base):
     else:
         # For FileStorage
         name = ''
-        
+
         @property
         def cities(self):
             """Lists instances of City with state_id == to current State.id"""
