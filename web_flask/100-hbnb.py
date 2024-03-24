@@ -34,7 +34,7 @@ def hbnb():
 
 
 @app.teardown_appcontext
-def teardown_db(exception):
+def close_db(exception):
     """Close the current session"""
     storage.close()
 
