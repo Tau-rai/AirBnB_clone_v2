@@ -20,7 +20,7 @@ def list_states():
 
 
 @app.teardown_appcontext
-def close_db(error):
+def close_db(exception):
     """Closes the current session"""
     storage.close()
 
