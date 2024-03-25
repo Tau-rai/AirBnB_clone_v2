@@ -15,8 +15,8 @@ app = Flask(__name__)
 @app.route("/states", strict_slashes=False)
 def states():
     """Lists all the states in the states list"""
-    states = storage.all(State).values()
-    return render_template("states.html", states=states)
+    states = sorted(storage.all(State).values(), key=lambda state: state.name)
+    return render_template("9-states.html", states=states)
 
 
 @app.route("/states/<id>", strict_slashes=False)
@@ -29,11 +29,11 @@ def state_id(id):
             break
 
     if state:
-        cities = state.cities
+        cities = sorted(state.cities, key=lambda city: city.name)
         return render_template(
-            "state_cities.html", state=state, cities=cities)
+            "9-states.html", state=state, cities=cities)
     else:
-        return render_template("not_found.html"), 404
+        return render_template("9-states.html")
 
 
 @app.teardown_appcontext
